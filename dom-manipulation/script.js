@@ -27,7 +27,7 @@ function showRandomQuote() {
     
     console.log(randomQuote)
 
-    myQuote.textContent = randomQuote.text
+    myQuote.innerHTML = randomQuote.text
 
    }
 
@@ -49,7 +49,7 @@ let categoryInput = document.createElement("input")
 
 let newQuoteButton = document.createElement("button")  
 
-newQuoteButton.textContent = "Add Quote"
+newQuoteButton.innerHTML = "Add Quote"
 
 form.appendChild(input)
 form.appendChild(categoryInput)
