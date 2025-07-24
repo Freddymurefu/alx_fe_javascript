@@ -24,7 +24,7 @@ async function syncQuotesToServer() {
       body: JSON.stringify(localQuotes)
     });
 
-    showNotification("Quotes synced with server.");
+    showNotification("Quotes synced with server!");
   } catch (error) {
     console.error("Error syncing to server:", error);
   }
