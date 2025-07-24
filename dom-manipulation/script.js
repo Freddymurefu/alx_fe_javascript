@@ -139,4 +139,37 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
+// Handle Import Quotes from JSON file
+let importInput = document.getElementById("importQuotes");
+
+importInput.addEventListener("change", function (event) {
+  let file = event.target.files[0];
+  if (!file) return;
+
+  let reader = new FileReader();
+
+  reader.onload = function () {
+    try {
+      let importedQuotes = JSON.parse(reader.result);
+
+      // Validate: check if it's an array of strings
+      if (Array.isArray(importedQuotes) && importedQuotes.every(q => typeof q === "string")) {
+        quotes = importedQuotes;
+        localStorage.setItem("quotes", JSON.stringify(quotes));
+        displayQuotes(); // Re-render on the page
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format. Please upload an array of quotes.");
+      }
+    } catch (e) {
+      alert("Failed to parse JSON file.");
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+
+
+
 })
