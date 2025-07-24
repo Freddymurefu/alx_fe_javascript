@@ -1,4 +1,5 @@
-const quotes = [{
+document.addEventListener("DOMContentLoaded", function(){
+const quotes = JSON.parse(localStorage.getItem("quotes")) || [{
     text: "All the greatness you need is inside you",
     category: "Inspiration"
 },
@@ -28,7 +29,8 @@ function showRandomQuote() {
     console.log(randomQuote)
 
     myQuote.innerHTML = randomQuote.text
-
+    
+    sessionStorage.setItem("lastQuote", JSON.stringify(randomQuote))
    }
 
 button.addEventListener ("click", showRandomQuote)
@@ -58,14 +60,82 @@ form.appendChild(newQuoteButton)
 
 newQuoteButton.addEventListener("click", function(event){
     event.preventDefault()
+
+    if (input.value.trim() === "" || categoryInput.value.trim() === "") {
+  alert("Please enter both quote and category.");
+  return;
+}
     const newQuote = {
         text: input.value,
         category: categoryInput.value
     }
 quotes.push(newQuote)
+localStorage.setItem("quotes", JSON.stringify(quotes))
+input.value = ""
+categoryInput.value = ""
+
+
 
 console.log(quotes)
 })
 }
 
 createAddQuoteForm()
+
+const lastQuote = sessionStorage.getItem("lastQuote")
+
+
+if (lastQuote) {
+    const parsedQuote = JSON.parse(lastQuote)
+    document.getElementById("quoteDisplay").innerHTML = parsedQuote.text
+} else{
+    showRandomQuote()
+}
+
+let newButton = document.createElement("button")
+document.body.appendChild(newButton)
+
+newButton.innerHTML = "Expert Quotes"
+
+newButton.addEventListener("click", function(){
+   let quotesArray = JSON.stringify(quotes)
+   let blob = new Blob([quotesArray],{type: "application/json"})
+
+ let url = URL.createObjectURL(blob)
+
+ const linkElement = document.createElement("a")
+linkElement.href= url
+linkElement.download = "quotes.json"
+linkElement.click()
+URL.revokeObjectURL(url)
+})
+
+  function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      const importedQuotes = JSON.parse(event.target.result);
+      importedQuotes.forEach(imported => {
+  if (!quotes.some(q => q.text === imported.text && q.category === imported.category)) {
+    quotes.push(imported);
+  }
+});
+saveQuotes();
+alert('Quotes imported successfully!');
+
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+
+  let fileInput = document.createElement("input");
+fileInput.type = "file";
+fileInput.accept = ".json"; // optional: only accept JSON files
+document.body.appendChild(fileInput);
+
+// When a file is selected, run the import function
+fileInput.addEventListener("change", importFromJsonFile);
+
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
+})
