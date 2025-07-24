@@ -1,4 +1,44 @@
 document.addEventListener("DOMContentLoaded", function(){
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = [...new Set(quotes.map(q => q.category))];
+
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+
+  // Restore saved filter
+  const savedCategory = localStorage.getItem("selectedCategory");
+  if (savedCategory) {
+    categoryFilter.value = savedCategory;
+    filterQuotes();
+  }
+}
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter(q => q.category === selectedCategory);
+
+  if (filteredQuotes.length === 0) {
+    myQuote.innerHTML = "No quotes in this category.";
+  } else {
+    const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+    const randomQuote = filteredQuotes[randomIndex];
+    myQuote.innerHTML = randomQuote.text;
+    sessionStorage.setItem("lastQuote", JSON.stringify(randomQuote));
+  }
+}
+document.getElementById("categoryFilter").addEventListener("change", filterQuotes);
+
+
 const quotes = JSON.parse(localStorage.getItem("quotes")) || [{
     text: "All the greatness you need is inside you",
     category: "Inspiration"
@@ -73,6 +113,7 @@ quotes.push(newQuote)
 localStorage.setItem("quotes", JSON.stringify(quotes))
 input.value = ""
 categoryInput.value = ""
+populateCategories(); // refresh the dropdown with any new categories
 
 
 
@@ -170,6 +211,7 @@ importInput.addEventListener("change", function (event) {
 });
 
 
+populateCategories(); // Make sure the dropdown is filled when the page loads
 
 
 })
