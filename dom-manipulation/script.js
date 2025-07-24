@@ -95,20 +95,21 @@ if (lastQuote) {
 let newButton = document.createElement("button")
 document.body.appendChild(newButton)
 
-newButton.innerHTML = "Expert Quotes"
+let exportButton = document.getElementById("exportQuotes");
 
-newButton.addEventListener("click", function(){
-   let quotesArray = JSON.stringify(quotes)
-   let blob = new Blob([quotesArray],{type: "application/json"})
+exportButton.addEventListener("click", function () {
+  let quotesArray = JSON.stringify(quotes);
+  let blob = new Blob([quotesArray], { type: "application/json" });
 
- let url = URL.createObjectURL(blob)
+  let url = URL.createObjectURL(blob);
 
- const linkElement = document.createElement("a")
-linkElement.href= url
-linkElement.download = "quotes.json"
-linkElement.click()
-URL.revokeObjectURL(url)
-})
+  const linkElement = document.createElement("a");
+  linkElement.href = url;
+  linkElement.download = "quotes.json";
+  linkElement.click();
+
+  URL.revokeObjectURL(url);
+});
 
   function importFromJsonFile(event) {
     const fileReader = new FileReader();
