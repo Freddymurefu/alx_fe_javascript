@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(){
-const serverURL = "https://mockapi.io/quotes"; // replace with actual mock API endpoint
-
+const serverURL = "https://jsonplaceholder.typicode.com/posts"; 
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(serverURL);
