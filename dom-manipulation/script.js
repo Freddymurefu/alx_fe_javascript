@@ -1,4 +1,47 @@
 document.addEventListener("DOMContentLoaded", function(){
+const serverURL = "https://mockapi.io/quotes"; // replace with actual mock API endpoint
+
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(serverURL);
+    const serverQuotes = await response.json();
+    
+    // Simple conflict resolution: overwrite local data
+    localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+    renderQuotes(serverQuotes); // Re-render quotes
+    showNotification("Quotes updated from server.");
+  } catch (error) {
+    console.error("Error fetching from server:", error);
+  }
+}
+
+async function syncQuotesToServer() {
+  try {
+    const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+    await fetch(serverURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(localQuotes)
+    });
+
+    showNotification("Quotes synced to server.");
+  } catch (error) {
+    console.error("Error syncing to server:", error);
+  }
+}
+setInterval(() => {
+  fetchQuotesFromServer();
+}, 30000);
+
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  notification.style.display = "block";
+  setTimeout(() => (notification.style.display = "none"), 5000);
+}
+
+
 function populateCategories() {
   const categoryFilter = document.getElementById("categoryFilter");
   const categories = [...new Set(quotes.map(q => q.category))];
